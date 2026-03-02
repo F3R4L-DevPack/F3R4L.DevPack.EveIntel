@@ -1,0 +1,6 @@
+@F3R4L.DevPack.EveIntel_HostAddress = http://localhost:5289
+
+GET {{F3R4L.DevPack.EveIntel_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

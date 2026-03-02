@@ -1,0 +1,6 @@
+﻿{
+  "LoggerConfiguration": {
+    "LogLevel": "Information",
+    "LogFilePath": "C:\\Logs\\EveIntel.log"
+  }
+}
