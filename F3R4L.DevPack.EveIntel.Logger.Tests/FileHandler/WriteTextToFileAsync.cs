@@ -3,7 +3,7 @@ using TestArticles = F3R4L.DevPack.EveIntel.Logger;
 
 namespace F3R4L.DevPack.EveIntel.Logger.Tests.FileHandler
 {
-    public class WriteToFileAsync
+    public class WriteTextToFileAsync
     {
         public TestArticles.FileHandler _objectUnderTest;
 
@@ -37,4 +37,5 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.FileHandler
                 File.Delete(_filePath);
             }
         }
+    }
 }
