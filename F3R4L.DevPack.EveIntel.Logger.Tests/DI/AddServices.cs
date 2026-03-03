@@ -42,5 +42,25 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.DI
             //  Assert
             dateTimeWrapper.Should().NotBeNull();
         }
+
+        [Test]
+        public void ICsvHandler_Is_Registered()
+        {
+            //  Arrange & Act
+            var csvHandler = _objectUnderTest.GetService<ICsvHandler>();
+
+            //  Assert
+            csvHandler.Should().NotBeNull();
+        }
+
+        [Test]
+        public void ILogFormattedTextHandler_Is_Registered()
+        {
+            //  Arrange & Act
+            var logHandler = _objectUnderTest.GetService<ILogFormattedTextHandler>();
+
+            //  Assert
+            logHandler.Should().NotBeNull();
+        }
     }
 }

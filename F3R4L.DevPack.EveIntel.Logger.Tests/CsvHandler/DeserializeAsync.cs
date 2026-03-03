@@ -47,10 +47,43 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.CsvHandler
             result.Last().Column2.Should().Be("Value4");
         }
 
+        [Test]
+        public async Task Returns_Properly_When_GivenStringInsensitive_ValidContext()
+        {
+            // Arrange
+            string[] context = new[] { "column1,column2", "Value1,Value2", "Value3,Value4" };
+
+            // Act
+            var result = await _objectUnderTest.DeserializeAsync<TestObject>(context);
+
+            // Assert
+            result.Count().Should().Be(2);
+            result.First().Column1.Should().Be("Value1");
+            result.First().Column2.Should().Be("Value2");
+            result.Last().Column1.Should().Be("Value3");
+            result.Last().Column2.Should().Be("Value4");
+        }
+
+        [Test]
+        public void ThrowsException_When_GivenInvalidContext()
+        {
+            // Arrange
+            string[] context = new[] { "column1,column2", "Value1,Value2", "Value3,Value4" };
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _objectUnderTest.DeserializeAsync<InvalidTestObject>(context));
+        }
+
         private class TestObject
         {
             public string Column1 { get; set; }
             public string Column2 { get; set; }
+        }
+
+        private class InvalidTestObject
+        {
+            public string Column1 { get; set; }
+            public string Column3 { get; set; }
         }
     }
 }

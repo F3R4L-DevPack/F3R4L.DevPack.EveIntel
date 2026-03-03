@@ -1,13 +1,9 @@
 ﻿using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace F3R4L.DevPack.EveIntel.Logger
 {
-    public class CsvHandler
+    public class CsvHandler : ICsvHandler
     {
         public Task<T[]> DeserializeAsync<T>(string[] context)
         {
@@ -24,7 +20,7 @@ namespace F3R4L.DevPack.EveIntel.Logger
                 };
                 var fieldNames = csvHelper.ReadFields();
 
-                if (!fieldNames.All(f => typeof(T).GetProperties().Select(s => s.Name).Contains(f)))
+                if (!fieldNames.All(f => typeof(T).GetProperties().Select(s => s.Name.ToLower()).Contains(f.ToLower())))
                 {
                     throw new InvalidOperationException("CSV field names do not match the properties of the target type.");
                 }
@@ -37,7 +33,7 @@ namespace F3R4L.DevPack.EveIntel.Logger
                     var obj = Activator.CreateInstance<T>();
                     for (int i = 0; i < fieldNames.Length; i++)
                     {
-                        var property = typeof(T).GetProperty(fieldNames[i]);
+                        var property = typeof(T).GetProperty(fieldNames[i], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                         if (property != null)
                         {
                             var value = Convert.ChangeType(fields[i], property.PropertyType);

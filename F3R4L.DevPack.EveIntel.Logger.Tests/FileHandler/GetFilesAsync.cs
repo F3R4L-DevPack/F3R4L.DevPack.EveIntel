@@ -23,7 +23,7 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.FileHandler
             var files = await _objectUnderTest.GetFileNamesAsync(filePath);
 
             //  Assert
-            files.Count().Should().Be(4);
+            files.Count().Should().Be(5);
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.FileHandler
             var files = await _objectUnderTest.GetFileNamesAsync(filePath, "*.txt");
 
             //  Assert
-            files.Count().Should().Be(3);
+            files.Count().Should().Be(4);
         }
     }
 }
