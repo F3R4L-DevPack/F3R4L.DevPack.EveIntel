@@ -1,0 +1,8 @@
+﻿<maui:MauiWinUIApplication
+    x:Class="F3R4L.DevPack.EveIntel.Logger.UI.WinUI.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:maui="using:Microsoft.Maui"
+    xmlns:local="using:F3R4L.DevPack.EveIntel.Logger.UI.WinUI">
+
+</maui:MauiWinUIApplication>

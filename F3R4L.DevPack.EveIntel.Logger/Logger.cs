@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace F3R4L.DevPack.EveIntel.Logger
 {
-    public class Logger<T> : ILogger
+    public class Logger<T> : ILogger<T>
     {
         private readonly IFileHandler _fileHandler;
         private readonly IDateTimeWrapper _dateTimeWrapper;
