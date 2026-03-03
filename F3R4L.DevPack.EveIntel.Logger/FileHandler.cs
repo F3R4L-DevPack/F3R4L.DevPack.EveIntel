@@ -1,6 +1,10 @@
 ﻿
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net.WebSockets;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Reflection.PortableExecutable;
 using System.Text;
 
 namespace F3R4L.DevPack.EveIntel.Logger
@@ -47,6 +51,43 @@ namespace F3R4L.DevPack.EveIntel.Logger
             {
                 return Task.FromResult(Directory.GetFiles(folder, pattern));
             }
+        }
+
+        public Task<string[]> GetEmbeddedResourceFileNamesAsync(Assembly? assembly = null, string subFolder = "Files")
+        {
+            return Task.Run(() => {
+                if (assembly == null)
+                {
+                    assembly = Assembly.GetAssembly(typeof(FileHandler));
+                }
+                string folderName = string.Format("{0}.{1}", assembly.GetName().Name, subFolder);
+                return assembly
+                    .GetManifestResourceNames()
+                    .Where(r => r.StartsWith(folderName))
+                    .ToArray();
+            });
+        }
+
+        public Task<string[]> ReadEmbeddedResourceTextFileAsync(string fileName, Assembly? assembly = null, string subFolder = "Files")
+        {
+            return Task.Run(async () =>
+            {
+                if (assembly == null)
+                {
+                    assembly = Assembly.GetAssembly(typeof(FileHandler));
+                }
+                string embeddedFileName = string.Format("{0}.{1}.{2}", assembly.GetName().Name, subFolder, fileName);
+                using var stream = assembly.GetManifestResourceStream(embeddedFileName);
+                using var streamReader = new StreamReader(stream);
+
+                var results = new List<string>();
+                string line;
+                while ((line = await streamReader.ReadLineAsync()) != null)
+                {
+                    results.Add(line);
+                }
+                return results.ToArray();
+            });
         }
     }
 }
