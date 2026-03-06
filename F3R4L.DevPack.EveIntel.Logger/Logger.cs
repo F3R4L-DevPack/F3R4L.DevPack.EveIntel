@@ -13,7 +13,8 @@ namespace F3R4L.DevPack.EveIntel.Logger
         public event EventHandler<LogEventArgs>? LogEntryAdded;
         
 
-        public Logger(IFileHandler fileHandler, IDateTimeWrapper dateTimeWrapper, IOptions<LoggerConfiguration> config)
+        public Logger(IFileHandler fileHandler, IDateTimeWrapper dateTimeWrapper, 
+            IOptions<LoggerConfiguration> config)
         {
             _fileHandler = fileHandler;
             _dateTimeWrapper = dateTimeWrapper;
@@ -26,6 +27,7 @@ namespace F3R4L.DevPack.EveIntel.Logger
                 return;
 
             var logEntryArgs = new LogEventArgs(_dateTimeWrapper.UtcNow, $"[{logLevel}] {typeof(T).Name}: {message}");
+
             await _fileHandler.WriteTextToFileAsync(_config.Value.LogFilePath, logEntryArgs.ToString());
 
             OnLogEntryAdded(logEntryArgs);

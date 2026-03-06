@@ -21,6 +21,12 @@ namespace F3R4L.DevPack.EveIntel.Logger.Models
         public string SystemName { get; set; }
         public string Message { get; set; }
 
+        private const string _fillerText = "UNKNOWN SYSTEM";
+
+        public LogLine()
+        {
+            
+        }
         public LogLine(string line, SystemData[] systems)
         {
             var split = line.Split(new string[] { " ] " }, StringSplitOptions.RemoveEmptyEntries);
@@ -40,7 +46,7 @@ namespace F3R4L.DevPack.EveIntel.Logger.Models
             UserName = split[0];
             Message = split[1];
 
-            SystemName = systems.FirstOrDefault(s => Message.Contains(s.SystemName))?.SystemName ?? string.Empty;
+            SystemName = systems.FirstOrDefault(s => Message.Contains(s.SolarSystemName))?.SolarSystemName ?? _fillerText;
         }
     }
 }

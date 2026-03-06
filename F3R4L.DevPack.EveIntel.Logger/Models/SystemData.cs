@@ -2,9 +2,9 @@
 {
     public class SystemData
     {
-        public double SystemID { get; set; }
+        public double SolarSystemID { get; set; }
         public double RegionID { get; set; }
-        public string SystemName { get; set; }
+        public string SolarSystemName { get; set; }
         public string RegionName { get; set; }
     }
 }

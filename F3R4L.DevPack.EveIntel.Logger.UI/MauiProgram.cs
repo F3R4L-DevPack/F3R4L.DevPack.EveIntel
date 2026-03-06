@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using F3R4L.DevPack.EveIntel.Logger.DependencyInjection;
+using F3R4L.DevPack.EveIntel.Logger.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace F3R4L.DevPack.EveIntel.Logger.UI
 {
@@ -14,6 +17,10 @@ namespace F3R4L.DevPack.EveIntel.Logger.UI
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+            builder.Services.Configure<LoggerConfiguration>(builder.Configuration.GetSection(nameof(LoggerConfiguration)));
+            builder.Services.AddServices();
 
 #if DEBUG
     		builder.Logging.AddDebug();

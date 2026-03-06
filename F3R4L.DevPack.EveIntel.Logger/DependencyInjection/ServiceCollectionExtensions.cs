@@ -7,9 +7,11 @@ namespace F3R4L.DevPack.EveIntel.Logger.DependencyInjection
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IFileHandler, FileHandler>();
-            services.AddSingleton<IDateTimeWrapper, DateTimeWrapper>();
-            services.AddSingleton<ICsvHandler, CsvHandler>();
-            services.AddSingleton<ILogFormattedTextHandler, LogFormattedTextHandler>();
+            services.AddScoped<IDateTimeWrapper, DateTimeWrapper>();
+            services.AddScoped<ICsvHandler, CsvHandler>();
+            services.AddScoped<ILogFormattedTextHandler, LogFormattedTextHandler>();
+            services.AddScoped<ILogger<Worker>, Logger<Worker>>();
+            services.AddScoped<IWorker, Worker>();
         }
     }
 }

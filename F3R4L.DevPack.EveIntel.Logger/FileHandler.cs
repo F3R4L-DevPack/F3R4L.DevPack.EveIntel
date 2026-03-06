@@ -28,6 +28,11 @@ namespace F3R4L.DevPack.EveIntel.Logger
         {
             if(!File.Exists(filePath))
             {
+                var dirPath = Path.GetDirectoryName(filePath);
+                if(!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
                 await File.Create(filePath).DisposeAsync();
             }
             await File.AppendAllLinesAsync(filePath, content, Encoding.UTF8);

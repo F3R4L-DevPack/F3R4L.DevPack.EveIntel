@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace F3R4L.DevPack.EveIntel.Logger
 {
-    public class Worker
+    public class Worker : IWorker
     {
         private readonly IFileHandler _fileHandler;
         private readonly ILogFormattedTextHandler _logFormattedTextHandler;
@@ -18,8 +18,37 @@ namespace F3R4L.DevPack.EveIntel.Logger
         //  Initialised to the number of lines to skip in the log file before reaching the first log entry. This is based on the standard EVE Online log file format, which includes metadata and headers in the first 13 lines.
         public static int LinesRead = 13;
         public static SystemData[] AllSystems = Array.Empty<SystemData>();
-        
-        public EventHandler<NewIntelLogEventArgs>? NewLogInfo;
+
+        public Worker(IFileHandler fileHandler, ILogFormattedTextHandler logFormattedTextHandler, ICsvHandler csvHandler, IDateTimeWrapper dateTimeWrapper, ILogger<Worker> logger)
+        {
+            _fileHandler = fileHandler;
+            _logFormattedTextHandler = logFormattedTextHandler;
+            _csvHandler = csvHandler;
+            _dateTimeWrapper = dateTimeWrapper;
+            _logger = logger;
+
+            InitializeAsync();
+        }
+
+        public event EventHandler<NewIntelLogEventArgs>? NewLogInfo;
+
+        public async Task InitializeAsync()
+        {
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    AllSystems = await _csvHandler.DeserializeAsync<SystemData>(
+                        await _fileHandler.ReadEmbeddedResourceTextFileAsync("system-region-lookup.csv")
+                    );
+                    await _logger.LogAsync($"Successfully read {AllSystems.Count()} systems from embedded data.", Enums.LogLevel.Debug);
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogAsync($"An error occurred during worker initialization. Error details: {ex.Message}", Enums.LogLevel.Error);
+                }
+            }).ConfigureAwait(false);
+        }
 
         public async Task ExecuteAsync(string fileName)
         {
@@ -32,20 +61,14 @@ namespace F3R4L.DevPack.EveIntel.Logger
 
                 if (fileLines.Count() > LinesRead)
                 {
-                    if (AllSystems.Count() == 0)
-                    {
-                        AllSystems = await _csvHandler.DeserializeAsync<SystemData>(
-                            await _fileHandler.ReadEmbeddedResourceTextFileAsync("system-region-lookup.csv")
-                        );
-                        await _logger.LogAsync($"Successfully read {AllSystems.Count()} systems from embedded data.", Enums.LogLevel.Debug);
-                    }
                     var logEntries = await _logFormattedTextHandler.DeserializeNextAsync(fileLines, AllSystems, LinesRead);
                     LinesRead += logEntries.Count();
 
-                    OnExecuteCompleted(logEntries);
+                    //OnExecuteCompleted(logEntries.Where(w => (_dateTimeWrapper.UtcNow.AddDays(-4).AddHours(-1) - w.LogDateTime).TotalMinutes <= 120));
+                    OnExecuteCompleted(logEntries.Where(w => (_dateTimeWrapper.UtcNow - w.LogDateTime).TotalMinutes <= 5));
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logger.LogAsync($"An error occurred while processing {fileName}. Error details: {ex.Message}", Enums.LogLevel.Error);
             }
@@ -53,10 +76,13 @@ namespace F3R4L.DevPack.EveIntel.Logger
             await _logger.LogAsync($"Worker process is complete.", Enums.LogLevel.Information);
         }
 
-        protected virtual void OnExecuteCompleted(LogLine[] logLines) //protected virtual method
+        protected virtual void OnExecuteCompleted(IEnumerable<LogLine> logLines) //protected virtual method
         {
-            NewLogInfo?.Invoke(this, 
-                new NewIntelLogEventArgs { LogLines = logLines });
+            if (logLines.Count() > 0)
+            {
+                NewLogInfo?.Invoke(this,
+                    new NewIntelLogEventArgs { LogLines = logLines });
+            }
         }
     }
 }

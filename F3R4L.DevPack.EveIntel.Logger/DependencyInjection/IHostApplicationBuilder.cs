@@ -1,7 +1,5 @@
 ﻿using F3R4L.DevPack.EveIntel.Logger.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace F3R4L.DevPack.EveIntel.Logger.DependencyInjection
 {

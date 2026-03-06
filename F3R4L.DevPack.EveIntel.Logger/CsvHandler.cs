@@ -18,7 +18,7 @@ namespace F3R4L.DevPack.EveIntel.Logger
                     TextFieldType = FieldType.Delimited,
                     Delimiters = new[] { "," }
                 };
-                var fieldNames = csvHelper.ReadFields();
+                var fieldNames = csvHelper.ReadFields() ?? Array.Empty<string>();
 
                 if (!fieldNames.All(f => typeof(T).GetProperties().Select(s => s.Name.ToLower()).Contains(f.ToLower())))
                 {
@@ -29,7 +29,7 @@ namespace F3R4L.DevPack.EveIntel.Logger
 
                 while (!csvHelper.EndOfData)
                 {
-                    var fields = csvHelper.ReadFields();
+                    var fields = csvHelper.ReadFields() ?? Array.Empty<string>();
                     var obj = Activator.CreateInstance<T>();
                     for (int i = 0; i < fieldNames.Length; i++)
                     {
