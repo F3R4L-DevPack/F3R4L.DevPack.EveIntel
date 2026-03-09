@@ -6,6 +6,6 @@ namespace F3R4L.DevPack.EveIntel.Logger
     public interface IWorker
     {
         event EventHandler<NewIntelLogEventArgs>? NewLogInfo;
-        Task ExecuteAsync(string fileName);
+        Task ExecuteAsync(string fileName, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

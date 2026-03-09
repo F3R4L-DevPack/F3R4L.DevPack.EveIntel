@@ -50,20 +50,35 @@ namespace F3R4L.DevPack.EveIntel.Logger
             }).ConfigureAwait(false);
         }
 
-        public async Task ExecuteAsync(string fileName)
+        public async Task ExecuteAsync(string fileName, CancellationToken cancellationToken = default(CancellationToken))
         {
             await _logger.LogAsync($"Worker is processing {fileName}.", Enums.LogLevel.Information);
 
             try
             {
+                if(cancellationToken.IsCancellationRequested)
+                {
+                    await _logger.LogAsync($"Cancellation requested. Aborting processing of {fileName}.", Enums.LogLevel.Information);
+                    return;
+                }
                 var fileLines = await _fileHandler.ReadTextFileAsync(fileName);
                 await _logger.LogAsync($"Successfully read {fileLines.Count() - LinesRead} lines from {fileName}.", Enums.LogLevel.Debug);
 
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await _logger.LogAsync($"Cancellation requested. Aborting processing of {fileName}.", Enums.LogLevel.Information);
+                    return;
+                }
                 if (fileLines.Count() > LinesRead)
                 {
                     var logEntries = await _logFormattedTextHandler.DeserializeNextAsync(fileLines, AllSystems, LinesRead);
                     LinesRead += logEntries.Count();
 
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        await _logger.LogAsync($"Cancellation requested. Aborting processing of {fileName}.", Enums.LogLevel.Information);
+                        return;
+                    }
                     //OnExecuteCompleted(logEntries.Where(w => (_dateTimeWrapper.UtcNow.AddDays(-4).AddHours(-1) - w.LogDateTime).TotalMinutes <= 120));
                     OnExecuteCompleted(logEntries.Where(w => (_dateTimeWrapper.UtcNow - w.LogDateTime).TotalMinutes <= 5));
                 }

@@ -28,8 +28,8 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.LogFormattedTextHandler
                 "﻿[ 2026.03.02 11:52:31 ] Momonogi Kana > 4-HWWF  Aniki EX-S  Aniki EX-Z"
             };
             var allSystems = new SystemData[] {
-                new SystemData { SystemName = "3USX-F" },
-                new SystemData { SystemName = "4-HWWF" }
+                new SystemData { SolarSystemName = "3USX-F" },
+                new SystemData { SolarSystemName = "4-HWWF" }
             };
 
             //  Act
@@ -43,7 +43,7 @@ namespace F3R4L.DevPack.EveIntel.Logger.Tests.LogFormattedTextHandler
             result[0].Message.Should().Be("Nari Kashada  3USX-F");
             result[1].LogDateTime.ToString("yyyy-MM-ddTHH:mm:ss").Should().Be("2026-03-02T11:52:15");
             result[1].UserName.Should().Be("NORTHERN HUNT3R");
-            result[1].SystemName.Should().Be("");
+            result[1].SystemName.Should().Be("UNKNOWN SYSTEM");
             result[1].Message.Should().Be("Pacifier");
             result[2].LogDateTime.ToString("yyyy-MM-ddTHH:mm:ss").Should().Be("2026-03-02T11:52:31");
             result[2].UserName.Should().Be("Momonogi Kana");
